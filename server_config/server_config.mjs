@@ -16,11 +16,11 @@ import multer from 'multer'; // 用于处理 multipart/form-data 类型的表单
 import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middleware'; // 代理服务
 
 // 导入模块文件
-import ServerListOptionsMJS from '../server_list_options/server_list_options.mjs'; // 站点配置文件
-import GlobalMJS from '../global/global.mjs';
+import ServerListOptionsMJS from './server_list_options.mjs'; // 站点配置文件
+import GlobalMJS from '../server_global/server_global.mjs';
 
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-const { _ROOT_PATH_: rootPath } = GlobalMJS;
+const { _WORKSPACE_PATH_, _SERVER_PATH_ } = GlobalMJS;
 const { siteConfigArray } = ServerListOptionsMJS;
 
 // 路径分隔符
@@ -39,7 +39,8 @@ const exampleConfigArray = [].concat(
     })
 );
 
-/* try {
+/*
+try {
     // 本地 IP 地址
     let LocalIPAddress = '';
 
@@ -52,8 +53,14 @@ const exampleConfigArray = [].concat(
             LocalIPAddress = element.address;
         }
     });
-} catch (error) {} */
+} catch (error) {}
+*/
 
+/**
+ * ExpressRouter
+ * 子路由实例
+ * ServerApp 全局中间件分发子路由（对应 hostname）处理程序
+ */
 class ExpressRouter {
     constructor(params = {}, options = {}) {
         // 实例化子路由
@@ -63,7 +70,8 @@ class ExpressRouter {
 
         // server 参数
         this.url = params.url || '127.0.0.1';
-        this.rootPath = params.rootPath || rootPath; // 根目录路径
+        this.rootPath = params.rootPath || _WORKSPACE_PATH_; // 根目录路径
+        this.serverPath = _SERVER_PATH_; // Server 根目录路径
 
         // 自定义中间件
         this.customMiddleware = params.customMiddleware || {}; // 自定义中间件对象
@@ -97,65 +105,6 @@ class ExpressRouter {
     useCustomMiddleware() {
         const _this = this;
 
-        /**
-         * 自定义中间件
-         */
-
-        // '/about/:params?' (self, path, request, response, next) {
-        //     // console.log('Request Type:', request.originalUrl);
-        //     // console.log('Request Type:', request.baseUrl);
-        //     // console.log('Request Type:', request.params);
-        //     // next();
-
-        //     /**
-        //      * 解决 url 为路径时的中间件
-        //      * 例：http://local.mil.eastday.com/about/
-        //      * 使用框架时的 url 路径匹配返回页面
-        //      */
-
-        //     response.sendFile(path.join(self.rootPath, '/Project/Work.sh.songheng/mil-newsite/dist/about/index.html'));
-        // }
-
-        // '/jsonp-proxy/:param?' (self, path, request, response, next) {
-        //     // http://local.com/jsonp-proxy/abc=1?callback=abcfn
-        //     // console.log('Request Type:', request.params);
-        //     // console.log('Request Type:', request.body);
-        //     // console.log('Request Type:', request.query);
-
-        //     let paramsArray = request.params.param ? String(request.params.param).split('&') : [];
-        //     let queryObject = request.query;
-        //     let callbackName = 'callback';
-        //     let sendObject = {};
-
-        //     paramsArray.forEach((element) => {
-        //         let elementArray = element.split('=');
-
-        //         if (!isNaN(Number(elementArray[1])) || elementArray[1] === 'true' || elementArray[1] === 'false') {
-        //             elementArray[1] = JSON.parse(elementArray[1]);
-        //         }
-
-        //         sendObject[elementArray[0]] = elementArray[1] || '';
-        //     });
-
-        //     for (const key in queryObject) {
-        //         if (String(key).toLocaleLowerCase().indexOf(callbackName) > -1) {
-        //             callbackName = key;
-        //         }
-        //     }
-
-        //     self.app.set('jsonp callback name', callbackName);
-        //     response.jsonp(sendObject);
-
-        //     // response.format({
-        //     //   json() {
-        //     //     response.send(`${queryObject[callbackName]}(${JSON.stringify(sendObject)})`);
-        //     //   },
-        //     //   default() {
-        //     //     response.send(request.query);
-        //     //   }
-        //     // });
-        // }
-
         for (const key in _this.customMiddleware) {
             _this.router.use(key, (request, response, next) => {
                 _this.customMiddleware[key](_this, path, request, response, next);
@@ -163,41 +112,13 @@ class ExpressRouter {
         }
     }
 
-    // 静态资源配置
+    // 配置静态资源，即使找不到也不会响应404，而是调用 next()
     staticResource() {
         const _this = this;
 
-        /**
-         * 配置静态资源，即使找不到也不会响应404，而是调用 next()
-         * 也可以用来重定向资源，单独的子项目资源会读取根项目的资源时可以使用
-         * //mini.eastday.com.local:9527/assets/
-         * 根目录：D:\
-         * 实际请求资源目录              实际响应资源目录
-         * __dirname + /assets/ ====> path.join(__dirname, '/Project/eastday-pc/www-root/assets')
-         */
-
-        /**
-         * 重定向html文件到某个固定html模板，或者在请求的参数中判断，然后响应固定页面
-         * //mini.eastday.com.local:9527/Project/mini-pchongbaon/www-root/pchongbao/*.html
-         * ==================================== ↓ 实际响应页面 ↓ ====================================
-         * __dirname + /Project/mini-pchongbao/www-root/pchongbao/pchongbao181227135322453.html
-         */
-
         for (const key in _this.static) {
-            /**
-             * 如果静态资源路径中含有 .html 后缀结尾的路径，则使其支持不带 .html 的网址
-             * 例如： http://local.com/t.html => http://local.com/t
-             */
-            let noSuffixArray = _this.static[key].reduce((resultArray, currentValue, currentIndex) => {
-                if (/\.html/.test(currentValue)) {
-                    resultArray.push(currentValue.replace('.html', ''));
-                }
-
-                return resultArray;
-            }, []);
-
-            _this.static[key].concat(noSuffixArray).forEach((element, index) => {
-                _this.router.use(element, express.static(path.join(_this.rootPath, key)));
+            _this.static[key].forEach((element, index) => {
+                _this.router.use(element, express.static(path.join(_this.rootPath, key), { extensions : ['html'] }));
             });
         }
     }
@@ -205,9 +126,6 @@ class ExpressRouter {
     // 代理请求
     proxyRequest() {
         const _this = this;
-
-        // proxy('**/*.json', {target: 'http://www.example.org:8000', changeOrigin: true});
-        // proxy(['**/*.json'], {target: 'http://www.example.org:8000', changeOrigin: true});
 
         /**
          * options.selfHandleResponse
@@ -244,7 +162,9 @@ class ExpressRouter {
                 let onProxyResHandle = createProxyOptions.onProxyResHandle || function () {};
 
                 if (createProxyOptions.selfHandleResponse) {
-                    createProxyOptions.onProxyRes = responseInterceptor(onProxyResHandle);
+                    createProxyOptions.on = {
+                        proxyRes : responseInterceptor(onProxyResHandle)
+                    };
                 }
 
                 delete createProxyOptions.onProxyResHandle;
@@ -297,7 +217,7 @@ class ExpressRouter {
     lastAllResponse() {
         const _this = this;
 
-        _this.router.all(':splat', (request, response, next) => {
+        _this.router.all('{*splat}', (request, response, next) => {
             const method = String(request.method).toLocaleUpperCase();
 
             let postData = null;
@@ -307,33 +227,37 @@ class ExpressRouter {
                 case 'GET':
                     // 指定访问首页的功能
                     if (_this.indexPage.enabled && _this.indexPage.indexUrl.some((element, index) => request.path === element)) {
-                        response.sendFile(path.join(_this.rootPath, _this.indexPage.indexPath));
+                        const indexHtmlFile = _this.indexPage.indexPath ? path.join(_this.rootPath, _this.indexPage.indexPath) : path.join(_this.serverPath, '/response_root_directory/html/index.html');
+                        response.sendFile(indexHtmlFile);
                     } else {
                         // 404 页面功能
-                        response.sendFile(path.join(_this.rootPath, request.path), {}, (error) => {
-                            // 读取不到文件为 error 对象，否则为 undefined
-                            if (error) {
-                                if (error.statusCode === 404 && _this.page404.enabled && _this.page404.page404Type.test(request.path)) {
-                                    // 重定向到 404 页面，只对每个请求链接做重定向，不会导致整个页面重定向
-                                    response.redirect(302, _this.page404.page404Url);
-                                } else {
-                                    // 读取通用 404 页面
-                                    let html404File = fs.readFileSync(path.join(_this.rootPath, '/Web/node_server/web_root/html', '404.html'), {
-                                        encoding : 'utf-8'
-                                    });
 
-                                    // 响应 404 状态码
-                                    response.status(404).send(html404File.replace('/* __CODE_REPLACE__ */', `let error404 = ${JSON.stringify(error)}; console.log(error404);`));
-                                    // response.status(404).send(`Not Found</br>${error}</br><script>let error404 = ${JSON.stringify(error)}; console.log(error404);</script>`);
-                                }
-                            }
-                        });
+                        // 获取路由文件
+                        const routeFile = path.join(_this.rootPath, request.path);
+
+                        if (fs.existsSync(routeFile)) {
+                            // 如果路由文件存在，则直接读取文件
+                            response.sendFile(routeFile);
+                        } else if (_this.page404.enabled && _this.page404.page404Type.test(request.path)) {
+                            // 如果路由文件不存在，判断是否需要重定向
+                            response.redirect(302, _this.page404.page404Url);
+                        } else {
+                            // 如果路由文件不存在且不需要重定向，则读取根目录下的 404 页面
+                            const html404File = fs.readFileSync(path.join(_this.serverPath, '/response_root_directory/html', '404.html'), {
+                                encoding : 'utf-8'
+                            });
+
+                            const error = { path : request.path, error : 'Not Found', status : 404 };
+
+                            // 响应 404 状态码
+                            response.status(404).send(html404File.replace('/* __CODE_REPLACE__ */', `let error404 = ${JSON.stringify(error)}; console.log(error404);`));
+                            // response.status(404).send(`Not Found</br>${error}</br><script>let error404 = ${JSON.stringify(error)}; console.log(error404);</script>`);
+                        }
                     }
                     break;
 
                 case 'POST':
                     postData = request.body;
-                    // postPath = `D:/CaChe/PostData/post_${new Date().getTime()}_${Math.random().toString(36).substring(2, 10)}.json`;
 
                     response.json({ statusCode : 200, message : `没有对应的[${method}]处理程序` });
                     break;
@@ -368,6 +292,7 @@ class ServerApp {
 
         // server 参数
         this.url = '127.0.0.1';
+        this.serverPath = _SERVER_PATH_; // Server 根目录路径
 
         // 路由对象
         this.routerObject = {};
@@ -402,7 +327,7 @@ class ServerApp {
         // 配置说明 参考官方文档
         log4js.configure({
             appenders : {
-                console : { type : 'console', layout : { type : 'pattern', pattern : '[%d{yyyy/MM/dd hh:mm:ss:SSS}] [%p] %m' } },
+                console : { type : 'console', layout : { type : 'pattern', pattern : '[%p] %m' } },
                 file    : { type : 'file', layout : { type : 'pattern', pattern : '[%d{yyyy/MM/dd hh:mm:ss:SSS}] [%p] %m' }, filename : './logs/application.log' }
             },
             categories     : { default : { appenders : ['console', 'file'], level : 'trace' } },
@@ -449,7 +374,7 @@ class ServerApp {
         };
 
         // allow custom header and CORS
-        _this.app.all('*', (request, response, next) => {
+        _this.app.all('{*splat}', (request, response, next) => {
             for (const key in ResponseHeadersConfig) {
                 response.header(key, ResponseHeadersConfig[key]);
             }
@@ -495,6 +420,7 @@ class ServerApp {
         const _this = this;
 
         _this.app.use((request, response, next) => {
+            // 此中间件按照 request.hostname 分发到对应的子路由，如没有对应的子路由则分发到默认的子路由
             (_this.routerObject[request.hostname] || _this.routerObject[exampleConfigArray[0].url]).router(request, response, next);
         });
     }
@@ -503,14 +429,12 @@ class ServerApp {
     openServer() {
         const _this = this;
 
-        const filePath_Absolute = path.join(__dirname.slice(0, __dirname.indexOf('node_server')), 'node_server', 'https_server');
-
-        console.log(filePath_Absolute);
+        const Certificate_Path = path.join(_this.serverPath, '/Certificate_HTTPS');
 
         // 同步读取密钥和签名证书
         let options = {
-            key  : fs.readFileSync(path.join(filePath_Absolute, 'https_server.key'), 'utf8'),
-            cert : fs.readFileSync(path.join(filePath_Absolute, 'https_server.crt'), 'utf8')
+            key  : fs.readFileSync(path.join(Certificate_Path, 'certificate_https.key'), 'utf8'),
+            cert : fs.readFileSync(path.join(Certificate_Path, 'certificate_https.crt'), 'utf8')
         };
 
         // HTTPS
@@ -525,4 +449,4 @@ class ServerApp {
     }
 }
 
-const app = new ServerApp();
+export default ServerApp;

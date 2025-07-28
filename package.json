@@ -1,16 +1,14 @@
 {
     "name": "Server_Lucky",
-    "version": "3.0.0",
+    "version": "5.0.0",
     "description": "",
     "scripts": {
-        "server-v2": "pm2 start ./server_v2/config/pm2_config/ecosystem.config.js",
-        "server-v3": "pm2 start ./server_v3/config/pm2_config/ecosystem.config.cjs",
-        "stopPm2": "pm2 stop all && pm2 delete all",
-        "v2": "npm run server-v2",
-        "v3": "npm run server-v3",
+        "dev": "node --trace-deprecation ./server_main.mjs",
+        "start": "pm2 start ./server_config/ecosystem.config.cjs",
+        "server": "npm run start",
+        "restart": "npm run stopPm2 && npm run server",
         "reload": "pm2 reload all",
-        "stop": "npm run stopPm2",
-        "restart": "npm run stopPm2 && npm run v3"
+        "stop": "pm2 stop all && pm2 delete all"
     },
     "keywords": [],
     "author": "",
@@ -24,9 +22,5 @@
         "mime": "^4.0.7",
         "multer": "^2.0.2",
         "pm2": "^6.0.8"
-    },
-    "type": "module",
-    "engines": {
-        "node": ">=20.11"
     }
 }
