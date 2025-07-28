@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+    </style>
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.js"></script>
+</head>
+
+<body>
+
+    <form action="http://mini.eastday.com.local:9501/upload" id="box" method="post" enctype="multipart/form-data">
+        <input type="file" name="wenjian" id="file">
+        <input type="submit" id="btn" value="888">
+    </form>
+
+</body>
+
+<script>
+    var file = document.getElementById('file');
+    var box = document.getElementById('box');
+    var btn = document.getElementById('btn');
+
+    var formData = new FormData();
+
+    file.addEventListener('change', function () {
+        // files:里面存储了所有上传的文件
+        // 这个data就是我们上传的那个文件
+        var data = file.files[0];
+        // 1. 创建一个文件读取器
+        var fr = new FileReader();
+        // 2. 让文件读取器读取整个文件
+        fr.readAsText(data);
+        // 3. 等待文件读取完
+        // onload：文件读取完成后，就会触发
+        fr.onload = function () {
+            formData.append('wenjian', data);
+            formData.append('id', '1111');
+            var request = new XMLHttpRequest();
+            request.open('POST', 'http://mini.eastday.com.local:9501/upload');
+            request.send(formData);
+        };
+    });
+
+    setTimeout(() => {
+        let data = {
+            id: 1,
+            name: 'ceshi'
+        };
+        $.ajax({
+            type: 'post',
+            url: 'http://mini.eastday.com.local:9501',
+            data: data,
+            // dataType: 'dataType',
+            success: function (res) {
+                console.log(res);
+            }
+        });
+    }, 5000);
+</script>
+
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #header {
+            margin: 0 auto;
+            padding: 10px 0;
+            height: 50px;
+            text-align: center;
+        }
+
+        #main {
+            padding: 20px;
+        }
+
+        #table {
+            margin: 0 auto;
+            width: 800px;
+            border-collapse: collapse;
+        }
+
+        #table tr td {
+            text-align: center;
+            line-height: 26px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+        }
+
+        #table tr td:nth-of-type(1) {
+            width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header"></header>
+
+    <main id="main">
+        <table id="table">
+            <tr>
+                <td>日期</td>
+                <td id="date"></td>
+            </tr>
+            <tr>
+                <td>星期</td>
+                <td id="day"></td>
+            </tr>
+            <tr>
+                <td>时间</td>
+                <td id="time"></td>
+            </tr>
+            <tr>
+                <td>IP</td>
+                <td>__IP__</td>
+            </tr>
+            <tr>
+                <td>x-forwarded-for</td>
+                <td>__X-FORWARDED-FOR__</td>
+            </tr>
+        </table>
+    </main>
+
+    <script>
+        setInterval(() => {
+            let currentTime = new Date();
+            let year = currentTime.getFullYear();
+            let month = currentTime.getMonth() + 1;
+            let date = currentTime.getDate();
+            let hour = currentTime.getHours();
+            let minute = currentTime.getMinutes();
+            let second = currentTime.getSeconds();
+            let day = currentTime.getDay();
+            let dayArray = ['天', '一', '二', '三', '四', '五', '六'];
+
+            let dateArr = [year, month, date].map((element) => String(element).padStart(2, 0));
+            let timeArr = [hour, minute, second].map((element) => String(element).padStart(2, 0));
+
+            document.getElementById('date').innerText = `${dateArr[0]}年${dateArr[1]}月${dateArr[2]}日`;
+            document.getElementById('day').innerText = dayArray[day];
+            document.getElementById('time').innerText = timeArr.join(':');
+        }, 100);
+    </script>
+</body>
+
+</html>
