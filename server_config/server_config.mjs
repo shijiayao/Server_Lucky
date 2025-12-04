@@ -113,6 +113,11 @@ class ExpressRouter {
     }
 
     // 配置静态资源，即使找不到也不会响应404，而是调用 next()
+    /**
+     * 配置静态资源，即使找不到也不会响应404，而是调用 next()
+     * 按照 static 顺序依次查找匹配的静态资源目录或文件
+     * 设置了 /{*splat} 时，表示所有请求都匹配到此路径，而不会再调用 next() 继续往下匹配
+     */
     staticResource() {
         const _this = this;
 

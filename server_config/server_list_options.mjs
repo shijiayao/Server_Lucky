@@ -171,6 +171,7 @@ export default {
             static   : {
                 // '实际响应的目录或文件': ['页面请求的目录或文件数组'],
                 '/Temp'                                : ['/static'],
+                '/Temp/browser/html'                   : ['/html'],
                 '/Temp/browser/html/server-index.html' : ['/server-index.html']
                 // '/Server_Lucky/response_root_directory/html/index.html' : ['/{*splat}.html']
             },
@@ -365,9 +366,10 @@ export default {
             rootPath : _WORKSPACE_PATH_,
             static   : {
                 // '实际响应的目录或文件': ['页面请求的目录或文件数组'],
+                '/Temp/browser/html/a.html'                 : ['/a.html'],
                 '/Temp/browser/javascript/'                 : ['/javascript/'],
                 '/Temp/browser/css/'                        : ['/css/'],
-                '/Temp/browser/html/local.11.33.1.253.html' : ['/{*splat}.html', '/{*splat}']
+                '/Temp/browser/html/local.11.33.1.253.html' : ['/{*splat}', '/{*splat}.html']
             },
             indexPage : {
                 enabled   : false,
