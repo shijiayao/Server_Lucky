@@ -123,7 +123,7 @@ class ExpressRouter {
 
         for (const key in _this.static) {
             _this.static[key].forEach((element, index) => {
-                _this.router.use(element, express.static(path.join(_this.rootPath, key), { extensions : ['html'] }));
+                _this.router.use(element, express.static(path.join(_this.rootPath, key), { extensions: ['html'] }));
             });
         }
     }
@@ -168,7 +168,7 @@ class ExpressRouter {
 
                 if (createProxyOptions.selfHandleResponse) {
                     createProxyOptions.on = {
-                        proxyRes : responseInterceptor(onProxyResHandle)
+                        proxyRes: responseInterceptor(onProxyResHandle)
                     };
                 }
 
@@ -198,8 +198,8 @@ class ExpressRouter {
 
         let upload = multer({
             storage,
-            limits : {
-                fileSize : 100 // 字节
+            limits: {
+                fileSize: 100 // 字节
             },
             fileFilter(req, file, callback) {
                 // 设置一个函数来控制什么文件可以上传以及什么文件应该跳过
@@ -210,11 +210,11 @@ class ExpressRouter {
         });
 
         // name 为前端上传文件时使用的 name 属性，是 node 定义的用于接受文件数据的接口参数
-        let cpUpload = upload.fields([{ name : 'wenjian', maxCount : 10 }]);
+        let cpUpload = upload.fields([{ name: 'wenjian', maxCount: 10 }]);
 
         // 上传文件处理
         _this.router.post('/upload', cpUpload, (request, response, next) => {
-            response.json({ statusCode : 200, result : true });
+            response.json({ statusCode: 200, result: true });
         });
     }
 
@@ -249,10 +249,10 @@ class ExpressRouter {
                         } else {
                             // 如果路由文件不存在且不需要重定向，则读取根目录下的 404 页面
                             const html404File = fs.readFileSync(path.join(_this.serverPath, '/response_root_directory/html', '404.html'), {
-                                encoding : 'utf-8'
+                                encoding: 'utf-8'
                             });
 
-                            const error = { path : request.path, error : 'Not Found', status : 404 };
+                            const error = { path: request.path, error: 'Not Found', status: 404 };
 
                             // 响应 404 状态码
                             response.status(404).send(html404File.replace('/* __CODE_REPLACE__ */', `let error404 = ${JSON.stringify(error)}; console.log(error404);`));
@@ -264,11 +264,11 @@ class ExpressRouter {
                 case 'POST':
                     postData = request.body;
 
-                    response.json({ statusCode : 200, message : `没有对应的[${method}]处理程序` });
+                    response.json({ statusCode: 200, message: `没有对应的[${method}]处理程序` });
                     break;
 
                 default:
-                    response.json({ statusCode : 200, message : `没有对应的[${method}]处理程序` });
+                    response.json({ statusCode: 200, message: `没有对应的[${method}]处理程序` });
                     break;
             }
         });
@@ -331,13 +331,13 @@ class ServerApp {
 
         // 配置说明 参考官方文档
         log4js.configure({
-            appenders : {
-                console : { type : 'console', layout : { type : 'pattern', pattern : '[%p] %m' } },
-                file    : { type : 'file', layout : { type : 'pattern', pattern : '[%d{yyyy/MM/dd hh:mm:ss:SSS}] [%p] %m' }, filename : './logs/application.log' }
+            appenders: {
+                console: { type: 'console', layout: { type: 'pattern', pattern: '[%p] %m' } },
+                file: { type: 'file', layout: { type: 'pattern', pattern: '[%d{yyyy/MM/dd hh:mm:ss:SSS}] [%p] %m' }, filename: './logs/application.log' }
             },
-            categories     : { default : { appenders : ['console', 'file'], level : 'trace' } },
-            pm2            : true,
-            pm2InstanceVar : 'INSTANCE_ID'
+            categories: { default: { appenders: ['console', 'file'], level: 'trace' } },
+            pm2: true,
+            pm2InstanceVar: 'INSTANCE_ID'
         });
 
         _this.logger = log4js.getLogger();
@@ -350,8 +350,8 @@ class ServerApp {
         // 配置说明 https://log4js-node.github.io/log4js-node/connect-logger.html
         _this.app.use(
             log4js.connectLogger(_this.logger, {
-                level  : 'auto',
-                format : `[:method] [:status] [HTTP/:http-version] [:hostname] [:url] [:referrer] [:user-agent] [:content-length] [:response-timems] [:remote-addr]`
+                level: 'auto',
+                format: `[:method] [:status] [HTTP/:http-version] [:hostname] [:url] [:referrer] [:user-agent] [:content-length] [:response-timems] [:remote-addr]`
             })
         );
     }
@@ -373,9 +373,9 @@ class ServerApp {
 
         // headers 参数
         let ResponseHeadersConfig = {
-            'Access-Control-Allow-Headers' : '*',
-            'Access-Control-Allow-Methods' : '*',
-            'Access-Control-Allow-Origin'  : '*'
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Methods': '*',
+            'Access-Control-Allow-Origin': '*'
         };
 
         // allow custom header and CORS
@@ -409,7 +409,7 @@ class ServerApp {
         _this.app.use(express.json());
         _this.app.use(express.raw());
         _this.app.use(express.text());
-        _this.app.use(express.urlencoded({ extended : true }));
+        _this.app.use(express.urlencoded({ extended: true }));
 
         // 全局中间件
         _this.globalMiddleware();
@@ -438,8 +438,8 @@ class ServerApp {
 
         // 同步读取密钥和签名证书
         let options = {
-            key  : fs.readFileSync(path.join(Certificate_Path, 'certificate_https.key'), 'utf8'),
-            cert : fs.readFileSync(path.join(Certificate_Path, 'certificate_https.crt'), 'utf8')
+            key: fs.readFileSync(path.join(Certificate_Path, 'certificate_https.key'), 'utf8'),
+            cert: fs.readFileSync(path.join(Certificate_Path, 'certificate_https.crt'), 'utf8')
         };
 
         // HTTPS
