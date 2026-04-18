@@ -185,4 +185,4 @@ dist
 # Custom Additions
 package-lock.json
 pnpm-lock.yaml
-response_root_directory/datebase
+response_root_directory/database
