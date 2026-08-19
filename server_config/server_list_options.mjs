@@ -18,21 +18,21 @@ function sleep(time = 1000) {
 }
 
 export default {
-    exampleConfig : {
-        url      : 'local.com',
-        rootPath : _WORKSPACE_PATH_,
-        default  : true, // 默认的服务
-        static   : {
+    exampleConfig: {
+        url: 'local.com',
+        rootPath: _WORKSPACE_PATH_,
+        default: true, // 默认的服务
+        static: {
             // '实际响应的目录或文件': ['页面请求的目录或文件数组'],
-            '/Temp'                                : ['/static'],
-            '/Temp/browser/html/server-index.html' : ['/server-index.html']
+            '/Temp': ['/static'],
+            '/Temp/browser/html/server-index.html': ['/server-index.html']
             // '/Server_Lucky/response_root_directory/html/index.html' : ['/{*splat}.html']
         },
-        customMiddleware : {
+        customMiddleware: {
             '/'(self, path, request, response, next) {
                 if (request.path === '/' || request.path.indexOf('/index') === 0) {
                     let indexFile = fs.readFileSync(path.join(_SERVER_PATH_, '/response_root_directory/html/', 'index.html'), {
-                        encoding : 'utf-8'
+                        encoding: 'utf-8'
                     });
 
                     response.status(200).send(indexFile.replace('__IP__', String(request.ip || '').replace('::ffff:', '')).replace('__X-FORWARDED-FOR__', request.headers['x-forwarded-for'] || ''));
@@ -88,7 +88,7 @@ export default {
                 next();
             },
             '/local-json/{:param}'(self, path, request, response, next) {
-                let jsonFile = fs.readFileSync('D:\\Work\\Code\\Test\\Json\\local-zt.json', { encoding : 'utf-8' });
+                let jsonFile = fs.readFileSync('D:\\Work\\Code\\Test\\Json\\local-zt.json', { encoding: 'utf-8' });
                 let jsonArray = JSON.parse(jsonFile);
 
                 jsonArray.sort(() => Math.random() - 0.5);
@@ -104,7 +104,7 @@ export default {
 
                 response.format({
                     json() {
-                        response.send(`${callbackName}(${JSON.stringify({ ctime : '2022-10-28 09:30:17', data : jsonArray[0] })})`);
+                        response.send(`${callbackName}(${JSON.stringify({ ctime: '2022-10-28 09:30:17', data: jsonArray[0] })})`);
                     },
                     default() {
                         response.send(request.query);
@@ -112,35 +112,35 @@ export default {
                 });
             }
         },
-        indexPage : {
-            enabled   : true,
-            indexUrl  : ['/', '/index.html'],
-            indexPath : false
+        indexPage: {
+            enabled: true,
+            indexUrl: ['/', '/index.html'],
+            indexPath: false
         },
-        page404 : {
-            enabled : false
+        page404: {
+            enabled: false
         },
-        proxy : [
+        proxy: [
             {
-                enabled : true,
-                options : {
-                    pathFilter   : ['/static/library/javascript/jquery.js'],
-                    target       : 'https://cdn.bootcdn.net',
-                    changeOrigin : true,
-                    pathRewrite  : {
-                        '/static/library/javascript/jquery.js' : '/ajax/libs/jquery/1.9.1/jquery.js'
+                enabled: true,
+                options: {
+                    pathFilter: ['/static/library/javascript/jquery.js'],
+                    target: 'https://cdn.bootcdn.net',
+                    changeOrigin: true,
+                    pathRewrite: {
+                        '/static/library/javascript/jquery.js': '/ajax/libs/jquery/1.9.1/jquery.js'
                     }
                 }
             },
             {
-                enabled : true,
-                options : {
-                    pathFilter         : ['/test-proxy.html'],
-                    target             : 'http://local.charles.com',
-                    changeOrigin       : true,
-                    selfHandleResponse : true,
-                    pathRewrite        : {
-                        '/test-proxy.html' : '/server-index.html'
+                enabled: true,
+                options: {
+                    pathFilter: ['/test-proxy.html'],
+                    target: 'http://local.charles.com',
+                    changeOrigin: true,
+                    selfHandleResponse: true,
+                    pathRewrite: {
+                        '/test-proxy.html': '/server-index.html'
                     },
                     async onProxyResHandle(responseBuffer, proxyRes, request, response) {
                         const ResponseString = responseBuffer.toString('utf8'); // convert buffer to string
@@ -149,12 +149,12 @@ export default {
                 }
             },
             {
-                enabled : true,
-                options : {
-                    pathFilter         : ['/special_121.html'],
-                    target             : 'https://mini.eastday.com',
-                    changeOrigin       : true,
-                    selfHandleResponse : true,
+                enabled: true,
+                options: {
+                    pathFilter: ['/special_121.html'],
+                    target: 'https://mini.eastday.com',
+                    changeOrigin: true,
+                    selfHandleResponse: true,
                     async onProxyResHandle(responseBuffer, proxyRes, request, response) {
                         const ResponseString = responseBuffer.toString('utf8'); // convert buffer to string
                         return ResponseString; // manipulate response and return the result
@@ -163,22 +163,24 @@ export default {
             }
         ]
     },
-    siteConfigArray : [
+    siteConfigArray: [
         {
-            url      : 'local.com',
-            rootPath : _WORKSPACE_PATH_,
-            default  : true, // 默认的服务
-            static   : {
+            url: 'local.com',
+            rootPath: _WORKSPACE_PATH_,
+            default: true, // 默认的服务
+            static: {
                 // '实际响应的目录或文件': ['页面请求的目录或文件数组'],
-                '/Temp'                                : ['/static'],
-                '/Temp/browser/html/server-index.html' : ['/server-index.html']
+                '/Temp': ['/static'],
+                '/Temp/browser/html': ['/html'],
+                '/Temp/browser/html/server-index.html': ['/server-index.html'],
+                '/Temp/browser/javascript/ljs.js': ['/ljs.js']
                 // '/Server_Lucky/response_root_directory/html/index.html' : ['/{*splat}.html']
             },
-            customMiddleware : {
+            customMiddleware: {
                 '/'(self, path, request, response, next) {
                     if (request.path === '/' || request.path.indexOf('/index') === 0) {
                         let indexFile = fs.readFileSync(path.join(_SERVER_PATH_, '/response_root_directory/html/', 'index.html'), {
-                            encoding : 'utf-8'
+                            encoding: 'utf-8'
                         });
 
                         response.status(200).send(indexFile.replace('__IP__', String(request.ip || '').replace('::ffff:', '')).replace('__X-FORWARDED-FOR__', request.headers['x-forwarded-for'] || ''));
@@ -234,7 +236,7 @@ export default {
                     next();
                 },
                 '/local-json/{:param}'(self, path, request, response, next) {
-                    let jsonFile = fs.readFileSync('D:\\Work\\Code\\Test\\Json\\local-zt.json', { encoding : 'utf-8' });
+                    let jsonFile = fs.readFileSync('D:\\Work\\Code\\Test\\Json\\local-zt.json', { encoding: 'utf-8' });
                     let jsonArray = JSON.parse(jsonFile);
 
                     jsonArray.sort(() => Math.random() - 0.5);
@@ -250,43 +252,93 @@ export default {
 
                     response.format({
                         json() {
-                            response.send(`${callbackName}(${JSON.stringify({ ctime : '2022-10-28 09:30:17', data : jsonArray[0] })})`);
+                            response.send(`${callbackName}(${JSON.stringify({ ctime: '2022-10-28 09:30:17', data: jsonArray[0] })})`);
                         },
                         default() {
                             response.send(request.query);
                         }
                     });
+                },
+                '/api/dafabet'(self, path, request, response, next) {
+                    let jsonFile = fs.readFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), { encoding: 'utf-8' });
+                    let jsonObject = JSON.parse(jsonFile);
+
+                    const bodyData = request.body || {};
+                    const requestType = bodyData.RequestType || 'query';
+
+                    console.log(bodyData);
+
+                    if (requestType === 'add') {
+                        bodyData.groupBall.forEach((element) => {
+                            jsonObject[bodyData.dafafetName].push(element);
+                        });
+                        jsonObject[bodyData.dafafetName].sort((a, b) => b.期号 - a.期号);
+                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
+                        return response.json(jsonObject);
+                    } else if (requestType === 'delete') {
+                        jsonObject[bodyData.dafafetName] = jsonObject[bodyData.dafafetName].filter((element) => {
+                            return String(element.期号) !== String(bodyData.期号);
+                        });
+                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
+                        return response.json(jsonObject);
+                    } else if (requestType === 'edit') {
+                        jsonObject[bodyData.dafafetName] = jsonObject[bodyData.dafafetName].map((element) => {
+                            if (String(element.期号) === String(bodyData.期号)) {
+                                element.号码 = bodyData.groupBall;
+                            }
+                            return element;
+                        });
+                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
+                        return response.json(jsonObject);
+                    } else if (requestType === 'update') {
+                        bodyData.groupBall.forEach((element) => {
+                            jsonObject[element.dafafetName] = jsonObject[element.dafafetName].map((item) => {
+                                if (String(item.期号) === String(element.期号)) {
+                                    item.开奖号码 = element.开奖号码;
+                                    item.开奖日期 = element.开奖日期;
+                                    item.中奖金额 = element.中奖金额;
+                                }
+                                return item;
+                            });
+                        });
+                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
+                        return response.json(jsonObject);
+                    } else if (requestType === 'query') {
+                        return response.json(jsonObject);
+                    }
+
+                    response.json({ code: 404, message: '请求类型错误' });
                 }
             },
-            indexPage : {
-                enabled   : true,
-                indexUrl  : ['/', '/index.html'],
-                indexPath : false
+            indexPage: {
+                enabled: true,
+                indexUrl: ['/', '/index.html'],
+                indexPath: false
             },
-            page404 : {
-                enabled : false
+            page404: {
+                enabled: false
             },
-            proxy : [
+            proxy: [
                 {
-                    enabled : true,
-                    options : {
-                        pathFilter   : ['/static/library/javascript/jquery.js'],
-                        target       : 'https://cdn.bootcdn.net',
-                        changeOrigin : true,
-                        pathRewrite  : {
-                            '/static/library/javascript/jquery.js' : '/ajax/libs/jquery/1.9.1/jquery.js'
+                    enabled: true,
+                    options: {
+                        pathFilter: ['/static/library/javascript/jquery.js'],
+                        target: 'https://cdn.bootcdn.net',
+                        changeOrigin: true,
+                        pathRewrite: {
+                            '/static/library/javascript/jquery.js': '/ajax/libs/jquery/1.9.1/jquery.js'
                         }
                     }
                 },
                 {
-                    enabled : true,
-                    options : {
-                        pathFilter         : ['/test-proxy.html'],
-                        target             : 'http://local.charles.com',
-                        changeOrigin       : true,
-                        selfHandleResponse : true,
-                        pathRewrite        : {
-                            '/test-proxy.html' : '/server-index.html'
+                    enabled: true,
+                    options: {
+                        pathFilter: ['/test-proxy.html'],
+                        target: 'http://local.charles.com',
+                        changeOrigin: true,
+                        selfHandleResponse: true,
+                        pathRewrite: {
+                            '/test-proxy.html': '/server-index.html'
                         },
                         async onProxyResHandle(responseBuffer, proxyRes, request, response) {
                             const ResponseString = responseBuffer.toString('utf8'); // convert buffer to string
@@ -295,12 +347,12 @@ export default {
                     }
                 },
                 {
-                    enabled : true,
-                    options : {
-                        pathFilter         : ['/special_121.html'],
-                        target             : 'https://mini.eastday.com',
-                        changeOrigin       : true,
-                        selfHandleResponse : true,
+                    enabled: true,
+                    options: {
+                        pathFilter: ['/special_121.html'],
+                        target: 'https://mini.eastday.com',
+                        changeOrigin: true,
+                        selfHandleResponse: true,
                         async onProxyResHandle(responseBuffer, proxyRes, request, response) {
                             const ResponseString = responseBuffer.toString('utf8'); // convert buffer to string
                             return ResponseString; // manipulate response and return the result
@@ -310,74 +362,75 @@ export default {
             ]
         },
         {
-            url      : 'local.library.com',
-            rootPath : _WORKSPACE_PATH_,
-            static   : {
+            url: 'local.library.com',
+            rootPath: _WORKSPACE_PATH_,
+            static: {
                 // '实际响应的目录或文件': ['页面请求的目录或文件数组'],
-                '/Temp' : ['/static', 'library']
+                '/Temp': ['/static', 'library']
             },
-            indexPage : {
-                enabled   : false,
-                indexUrl  : ['/', '/index.html'],
-                indexPath : false
+            indexPage: {
+                enabled: false,
+                indexUrl: ['/', '/index.html'],
+                indexPath: false
             },
-            page404 : {
-                enabled     : false,
-                page404Url  : '/404.html',
-                page404Type : /\.html/
+            page404: {
+                enabled: false,
+                page404Url: '/404.html',
+                page404Type: /\.html/
             },
-            proxy : []
+            proxy: []
         },
         {
-            url      : 'local.charles.com',
-            rootPath : _WORKSPACE_PATH_,
-            default  : false,
-            static   : {
+            url: 'local.charles.com',
+            rootPath: _WORKSPACE_PATH_,
+            default: false,
+            static: {
                 // '实际响应的目录或文件': ['页面请求的目录或文件数组'],
-                '/Temp'                                : ['/static'],
-                '/Temp/browser/html/server-index.html' : ['/{*splat}.html']
+                '/Temp': ['/static'],
+                '/Temp/browser/html/server-index.html': ['/{*splat}.html']
             },
-            customMiddleware : {},
-            indexPage        : {
-                enabled   : true,
-                indexUrl  : ['/', '/index.html'],
-                indexPath : '/Temp/browser/html/server-index.html'
+            customMiddleware: {},
+            indexPage: {
+                enabled: true,
+                indexUrl: ['/', '/index.html'],
+                indexPath: '/Temp/browser/html/server-index.html'
             },
-            page404 : {
-                enabled : false
+            page404: {
+                enabled: false
             },
-            proxy : [
+            proxy: [
                 {
-                    enabled : true,
-                    options : {
-                        pathFilter   : ['/static/library/javascript/jquery.js'],
-                        target       : 'https://cdn.bootcdn.net',
-                        changeOrigin : true,
-                        pathRewrite  : {
-                            '/static/library/javascript/jquery.js' : '/ajax/libs/jquery/1.9.1/jquery.js'
+                    enabled: true,
+                    options: {
+                        pathFilter: ['/static/library/javascript/jquery.js'],
+                        target: 'https://cdn.bootcdn.net',
+                        changeOrigin: true,
+                        pathRewrite: {
+                            '/static/library/javascript/jquery.js': '/ajax/libs/jquery/1.9.1/jquery.js'
                         }
                     }
                 }
             ]
         },
         {
-            url      : 'local.11.33.1.253.com',
-            rootPath : _WORKSPACE_PATH_,
-            static   : {
+            url: 'local.11.33.1.253.com',
+            rootPath: _WORKSPACE_PATH_,
+            static: {
                 // '实际响应的目录或文件': ['页面请求的目录或文件数组'],
-                '/Temp/browser/javascript/'                 : ['/javascript/'],
-                '/Temp/browser/css/'                        : ['/css/'],
-                '/Temp/browser/html/local.11.33.1.253.html' : ['/{*splat}.html', '/{*splat}']
+                '/Temp/browser/html/a.html': ['/a.html'],
+                '/Temp/browser/javascript/': ['/javascript/'],
+                '/Temp/browser/css/': ['/css/'],
+                '/Temp/browser/html/local.11.33.1.253.html': ['/{*splat}', '/{*splat}.html']
             },
-            indexPage : {
-                enabled   : false,
-                indexUrl  : ['/', '/index.html'],
-                indexPath : false
+            indexPage: {
+                enabled: false,
+                indexUrl: ['/', '/index.html'],
+                indexPath: false
             },
-            page404 : {
-                enabled : false
+            page404: {
+                enabled: false
             },
-            proxy : []
+            proxy: []
         }
     ]
 };

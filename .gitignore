@@ -178,6 +178,11 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/code,node,macos
 
+# Custom Additions Base
+.idea
+.vscode
+
 # Custom Additions
 package-lock.json
 pnpm-lock.yaml
+response_root_directory/database
