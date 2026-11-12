@@ -5,6 +5,7 @@ import url from 'url';
 
 // 导入模块文件
 import GlobalMJS from '../server_global/server_global.mjs';
+import DAFABET_API from '../server_global/dafabet_api.mjs';
 
 const { _WORKSPACE_PATH_, _SERVER_PATH_ } = GlobalMJS;
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
@@ -259,56 +260,9 @@ export default {
                         }
                     });
                 },
-                '/api/dafabet'(self, path, request, response, next) {
-                    let jsonFile = fs.readFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), { encoding: 'utf-8' });
-                    let jsonObject = JSON.parse(jsonFile);
+                '/api/dafabet': DAFABET_API.ApiDafabet,
 
-                    const bodyData = request.body || {};
-                    const requestType = bodyData.RequestType || 'query';
-
-                    console.log(bodyData);
-
-                    if (requestType === 'add') {
-                        bodyData.groupBall.forEach((element) => {
-                            jsonObject[bodyData.dafafetName].push(element);
-                        });
-                        jsonObject[bodyData.dafafetName].sort((a, b) => b.期号 - a.期号);
-                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
-                        return response.json(jsonObject);
-                    } else if (requestType === 'delete') {
-                        jsonObject[bodyData.dafafetName] = jsonObject[bodyData.dafafetName].filter((element) => {
-                            return String(element.期号) !== String(bodyData.期号);
-                        });
-                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
-                        return response.json(jsonObject);
-                    } else if (requestType === 'edit') {
-                        jsonObject[bodyData.dafafetName] = jsonObject[bodyData.dafafetName].map((element) => {
-                            if (String(element.期号) === String(bodyData.期号)) {
-                                element.号码 = bodyData.groupBall;
-                            }
-                            return element;
-                        });
-                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
-                        return response.json(jsonObject);
-                    } else if (requestType === 'update') {
-                        bodyData.groupBall.forEach((element) => {
-                            jsonObject[element.dafafetName] = jsonObject[element.dafafetName].map((item) => {
-                                if (String(item.期号) === String(element.期号)) {
-                                    item.开奖号码 = element.开奖号码;
-                                    item.开奖日期 = element.开奖日期;
-                                    item.中奖金额 = element.中奖金额;
-                                }
-                                return item;
-                            });
-                        });
-                        fs.writeFileSync(path.join(_SERVER_PATH_, '/response_root_directory/database/', 'dafabet.json'), JSON.stringify(jsonObject, null, 4), { encoding: 'utf-8' });
-                        return response.json(jsonObject);
-                    } else if (requestType === 'query') {
-                        return response.json(jsonObject);
-                    }
-
-                    response.json({ code: 404, message: '请求类型错误' });
-                }
+                '/api/crawler/draw': DAFABET_API.ApiCrawlerDraw
             },
             indexPage: {
                 enabled: true,
