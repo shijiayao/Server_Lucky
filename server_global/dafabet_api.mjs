@@ -108,7 +108,7 @@ export default {
         let CrawlerStatusArray = await DAFABET_DATABASE.getCrawlerStatus(Today);
         let CrawlerStatus = CrawlerStatusArray[0]?.status;
         let CrawlerStatusID = CrawlerStatusArray[0]?.id;
-        let CrawlerStatusMinutes = CrawlerStatusArray[0]?.LastUpdateTime.split(' ')[1].split(':')[1];
+        let CrawlerStatusTimeArray = CrawlerStatusArray[0]?.LastUpdateTime.split(' ')[1].split(':');
 
         // 序列化请求参数
         function canshu(object) {
@@ -228,7 +228,7 @@ export default {
         }
 
         // 无数据 || 未更新 || (21 点前更新 && 当前事件已过 21 点) || (21 点后更新 && 距离上一次更新已过去 10 分钟)
-        if (CrawlerStatus === undefined || CrawlerStatus === 0 || (CrawlerStatus === 1 && CurrentHour >= 21) || (CrawlerStatus === 2 && CurrentMinutes - CrawlerStatusMinutes > 10)) {
+        if (CrawlerStatus === undefined || CrawlerStatus === 0 || (CrawlerStatus === 1 && CurrentHour >= 21) || (CrawlerStatus === 2 && TimeArray.join('') - CrawlerStatusTimeArray.join('') > 1000)) {
             await PreCombineData();
         }
 
