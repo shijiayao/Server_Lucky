@@ -1,10 +1,4 @@
-// 原生模块
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import http from 'http';
-import https from 'https';
-import url from 'url';
+import { fs, os, path, http, https, url, GlobalMJS } from '../lib/deps.mjs';
 
 // 插件模块
 import _ from 'lodash';
@@ -17,9 +11,11 @@ import { createProxyMiddleware, responseInterceptor } from 'http-proxy-middlewar
 
 // 导入模块文件
 import ServerListOptionsMJS from './server_list_options.mjs'; // 站点配置文件
-import GlobalMJS from '../server_global/server_global.mjs';
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const __dirname = import.meta.dirname;
+const lastSegment = path.basename(__dirname);
+console.log('__dirname', __dirname, ' --- ', 'lastSegment:', lastSegment);
+
 const { _WORKSPACE_PATH_, _SERVER_PATH_ } = GlobalMJS;
 const { siteConfigArray } = ServerListOptionsMJS;
 
